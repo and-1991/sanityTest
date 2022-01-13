@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "prebuild": "echo 'Building Sanity to public/myproject' && cd myproject && yarn && npx @sanity/cli build ../public/myproject -y && echo 'Done'",
+    "prebuild": "echo 'Building Sanity to public/admin' && cd admin && yarn && npx @sanity/cli build ../public/admin -y && echo 'Done'",
     "sanity": "cd admin && sanity start",
     "lint": "next lint"
   },
