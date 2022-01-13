@@ -5,6 +5,8 @@ import {
 } from "@lib/sanity";
 import {format} from 'date-fns';
 import {groq} from "next-sanity";
+import {useState} from "react";
+import Dialog from '@mui/material/Dialog';
 
 // стартовый экран
 export default function Post(props) {
@@ -16,6 +18,21 @@ export default function Post(props) {
     initialData: post_data,
     enabled: preview || router.query.preview !== undefined,
   });
+
+  const [selectedImg, setSelectedImg] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openDialog = url => {
+    setSelectedImg(url);
+    setIsOpen(true);
+  }
+
+  const closeDialog = () => {
+    setIsOpen(false)
+    setTimeout(() => {
+      setSelectedImg(null)
+    }, 200)
+  }
 
   const getContentBody = (array) => Array.isArray(array) ? array.map(el => el.text) : null;
 
@@ -38,7 +55,8 @@ export default function Post(props) {
                   <div className="block h-64 relative rounded leading-snug">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      className="w-full h-full rounded-r object-contain"
+                      onClick={() => openDialog(post.mainImage?.asset?.url)}
+                      className="w-full h-full rounded-r object-contain cursor-pointer"
                       src={post.mainImage.asset.url}
                       alt="image"
                     />
@@ -55,6 +73,19 @@ export default function Post(props) {
             </div>
           </article>
         ))}
+      <Dialog
+        open={isOpen}
+        onClose={closeDialog}
+      >
+        <div className="bg-white px-16 py-14 rounded-md text-center">
+          <img
+            width={400}
+            height={400}
+            src={selectedImg}
+            alt="image"
+          />
+        </div>
+      </Dialog>
     </>
   );
 }
