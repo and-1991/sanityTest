@@ -3,8 +3,7 @@ import {
   getClient,
   usePreviewSubscription
 } from "@lib/sanity";
-import {format} from 'date-fns'
-
+import {format} from 'date-fns';
 import {groq} from "next-sanity";
 
 // стартовый экран
@@ -18,20 +17,35 @@ export default function Post(props) {
     enabled: preview || router.query.preview !== undefined,
   });
 
+  const getContentBody = (array) => Array.isArray(array) ? array.map(el => el.text) : null;
+
   return (
     <>
       {posts &&
         posts.map((post, idx) => (
           <article className="p-5" key={idx}>
-            <div className=" w-full lg:max-w-full lg:flex">
+            <div className=" w-full lg:max-w-full lg:flex text-center">
               <div className=" w-full border border-gray-400 p-5 flex flex-col justify-between leading-normal">
                 <div className="mb-8">
-                  <div className="text-gray-900 font-bold text-xl mb-2">{post.excerpt}</div>
+                  <div className="text-gray-900 font-bold text-xl mb-2">{post.title}</div>
                   <p className="text-gray-700 text-base">
-                    {post.body[0].children[0].text}
+                    {post.body.map((el, key) => (
+                      <div key={key}>{getContentBody(el.children)}</div>
+                    ))}
                   </p>
                 </div>
-                <div className="flex items-center">
+                {post.mainImage?.asset?.url && (
+                  <div className="block h-64 relative rounded leading-snug">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      className="w-full h-full rounded-r object-contain"
+                      src={post.mainImage.asset.url}
+                      alt="image"
+                    />
+                  </div>
+                )}
+
+                <div className="w-full text-right">
                   <div className="text-sm">
                     <p className="text-gray-900 leading-none">{post.author.name}</p>
                     <p className="text-gray-600">{format(new Date(post.publishedAt), 'dd/MM/yyyy')}</p>
@@ -45,18 +59,18 @@ export default function Post(props) {
   );
 }
 
-
 //принцип graphGL-ных запросов (определяем только то, что нужно нам)
 const query = groq`*[_type == "post"] | order(_createdAt desc) {
         author->{
           name
         },
         body,
-        excerpt,
+        title,
         publishedAt,
         mainImage{
         asset->{
           _id,
+          width,
           url
           }
         }
