@@ -5,12 +5,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "prebuild": "echo 'Building Sanity to public/myproject' && cd myproject && yarn && npx @sanity/cli build ../public/myproject -y && echo 'Done'",
+    "sanity": "cd admin && sanity start",
     "lint": "next lint"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.2",
+    "date-fns": "^2.28.0",
     "next": "12.0.8",
+    "next-sanity": "^0.4.0",
+    "postcss": "^8.4.5",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-icons": "^4.3.1",
+    "tailwindcss": "^3.0.13"
   },
   "devDependencies": {
     "eslint": "8.6.0",
